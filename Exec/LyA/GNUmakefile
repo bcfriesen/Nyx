@@ -9,7 +9,7 @@ TOP = ../..
 # compilation options
 COMP    = gcc
 USE_MPI = TRUE
-USE_OMP = TRUE
+USE_OMP = FALSE
 
 PROFILE       = FALSE
 TRACE_PROFILE = FALSE
@@ -45,7 +45,7 @@ DIM      = 3
 USE_GRAV = TRUE
 USE_HEATCOOL = TRUE
 
-USE_CVODE = FALSE
+USE_CVODE = TRUE
 
 Bpack := ./Make.package
 Blocs := .

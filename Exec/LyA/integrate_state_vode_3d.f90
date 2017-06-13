@@ -120,12 +120,15 @@ subroutine vode_wrapper(dt, rho_in, T_in, ne_in, e_in, T_out, ne_out, e_out)
     use amrex_fort_module, only : rt => amrex_real
     use vode_aux_module, only: rho_vode, T_vode, ne_vode, &
                                i_vode, j_vode, k_vode
+    use integrator_stats_mod, only: integrator_stats_t, get_integrator_stats, print_integrator_stats
 
     implicit none
 
     real(rt), intent(in   ) :: dt
     real(rt), intent(in   ) :: rho_in, T_in, ne_in, e_in
     real(rt), intent(  out) ::         T_out,ne_out,e_out
+
+    type(integrator_stats_t) :: stats
 
     ! Set the number of independent variables -- this should be just "e"
     integer, parameter :: NEQ = 1
@@ -213,6 +216,9 @@ subroutine vode_wrapper(dt, rho_in, T_in, ne_in, e_in, T_out, ne_out, e_out)
     call dvode(f_rhs, NEQ, y, time, dt, ITOL, rtol, atol, ITASK, &
                istate, IOPT, rwork, LRW, iwork, LIW, jac, MF_NUMERICAL_JAC, &
                rpar, ipar)
+
+    stats = get_integrator_stats(iwork, rwork)
+    call print_integrator_stats(stats)
 
     e_out  = y(1)
     T_out  = T_vode

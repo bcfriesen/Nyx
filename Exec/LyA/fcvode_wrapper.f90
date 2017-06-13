@@ -16,6 +16,7 @@ module fcvode_wrapper_mod
         use vode_aux_module, only: rho_vode, T_vode, ne_vode
         use cvode_interface
         use fnvector_serial
+        use integrator_stats_mod
         use, intrinsic :: iso_c_binding
 
         implicit none
@@ -25,6 +26,8 @@ module fcvode_wrapper_mod
         type(c_ptr), value :: cvmem
         type(c_ptr), value :: sunvec_y
         real(rt), intent(  out) ::         T_out,ne_out,e_out
+
+        type(integrator_stats_t) :: stats
 
         real(c_double) :: atol, rtol
         real(c_double) :: time, tout
@@ -51,6 +54,9 @@ module fcvode_wrapper_mod
         ierr = FCVodeSStolerances(CVmem, rtol, atol)
 
         ierr = FCVode(CVmem, dt, sunvec_y, time, CV_NORMAL)
+
+        stats = get_integrator_stats(cvmem)
+        call print_integrator_stats(stats)
 
         e_out  = yvec(1)
         T_out  = T_vode
